@@ -1189,14 +1189,10 @@ static void subsystem_restart_wq_func(struct work_struct *work)
 	track->p_state = SUBSYS_RESTARTING;
 	spin_unlock_irqrestore(&track->s_lock, flags);
 
-#ifdef CONFIG_SEC_DEBUG
-	if (sec_debug_is_enabled()) {
-		/* Collect ram dumps for all subsystems in order here */
-		pr_info("%s: collect ssr ramdump..\n", __func__);
-		for_each_subsys_device(list, count, NULL, subsystem_ramdump);
-		pr_info("%s: ..done\n", __func__);
-	}
-#endif
+	/* Collect ram dumps for all subsystems in order here */
+	pr_info("%s: collect ssr ramdump..\n", __func__);
+	for_each_subsys_device(list, count, NULL, subsystem_ramdump);
+	pr_info("%s: ..done\n", __func__);
 
 	for_each_subsys_device(list, count, NULL, subsystem_free_memory);
 
@@ -1318,12 +1314,9 @@ int subsystem_restart_dev(struct subsys_device *dev)
 		ssr_enable = sec_debug_is_enabled_for_ssr();
 	} else
 		pr_info("SSR by only ap debug level!!\n");
-
-	if (!sec_debug_is_enabled() || (!ssr_enable))
-		dev->restart_level = RESET_SUBSYS_COUPLED;
-	else
-		dev->restart_level = RESET_SOC;
 #endif
+
+	dev->restart_level = RESET_SOC;
 
 	if (!strncmp(name, "modem", 5)) {
 		if (silent_ssr)  /* qcrtr ioctl force silent ssr */
