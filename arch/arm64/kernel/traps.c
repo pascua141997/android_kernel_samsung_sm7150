@@ -66,7 +66,6 @@ static const char *handler[]= {
 
 int show_unhandled_signals = 0;
 
-#ifdef CONFIG_SEC_DEBUG
 /*
  * Dump out the contents of some kernel memory nicely...
  */
@@ -115,7 +114,6 @@ static void dump_mem(const char *lvl, const char *str, unsigned long bottom,
 done:
 	set_fs(fs);
 }
-#endif
 
 static void dump_backtrace_entry(unsigned long where)
 {
@@ -284,7 +282,6 @@ static int __die(const char *str, int err, struct pt_regs *regs)
 	show_regs(regs);
 
 	if (!user_mode(regs)) {
-#ifdef CONFIG_SEC_DEBUG
 		unsigned long bottom = regs->sp;
 		if (!object_is_on_stack((void *)bottom)) {
 			unsigned long irq_stack =
@@ -297,7 +294,6 @@ static int __die(const char *str, int err, struct pt_regs *regs)
 		}
 		dump_mem(KERN_EMERG, "Stack: ", bottom,
 			 THREAD_SIZE + (unsigned long)task_stack_page(tsk));
-#endif
 		dump_instr(KERN_EMERG, regs);
 	}
 
